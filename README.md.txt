@@ -1,175 +1,220 @@
-Ham Piksel Verisinden Yüz İfadesi Tanıma için Derin Öğrenme Tabanlı CNN Modeli (FER2013 – 8 Sınıf)
+# Ham Piksel Verisinden Yüz İfadesi Tanıma için Derin Öğrenme Tabanlı CNN Modeli (FER2013 – 8 Sınıf)  
 (A Deep Learning–Based CNN Model for Facial Expression Recognition from Raw Pixel Data)
-📌 Proje Özeti (Türkçe)
 
-Bu projede, yüz görüntülerinden temel duyguların doğrudan ham piksel verisi kullanılarak otomatik olarak tanınmasını amaçlayan derin öğrenme tabanlı bir Evrişimsel Sinir Ağı (CNN) modeli geliştirilmiştir.
+**GitHub Repo Name:** `fer2013-raw-pixel-cnn-8class`  
+**Course:** Derin Öğrenme ve Uygulamaları  
+**Student:** <YOUR NAME> (<STUDENT ID>)  
+**Instructor:** <INSTRUCTOR NAME>  
+**Date:** Dec 2025 – Jan 2026
 
-Model, FER2013 veri seti üzerinde eğitilmiş ve aşağıdaki 8 duygu sınıfını sınıflandırmaktadır:
+---
 
-Anger, Contempt, Disgust, Fear, Happiness, Neutral, Sadness, Surprise
+## 🇹🇷 Türkçe
 
-Bu çalışmada:
+### 1) Problem Tanımı
+Bu proje, **FER2013** veri setindeki yüz görüntülerinden **ham piksel verisi** (48×48 gri seviye) kullanarak duygu sınıflandırması yapmayı hedefler.  
+Model, **elle öznitelik çıkarımı (HOG/LBP/SIFT)** veya klasik ML yöntemleri olmadan, **uçtan uca (end-to-end)** bir **CNN** ile öğrenir.
 
-HOG, LBP, SIFT gibi elle çıkarılmış öznitelikler
+**Sınıflar (8):** `Anger, Contempt, Disgust, Fear, Happiness, Neutral, Sadness, Surprise`
 
-SVM, Random Forest gibi klasik makine öğrenmesi yöntemleri
+---
 
-❌ kullanılmamıştır.
-Tüm öznitelik temsili, CNN tarafından uçtan uca (end-to-end) olarak öğrenilmiştir.
+### 2) Veri Seti ve Ön İşleme
+- **Dataset:** FER2013 (48×48 grayscale facial images)
+- **Normalization:** piksel değerleri `[0, 1]` aralığına ölçeklenir
+- (Opsiyonel) **Augmentation:** küçük döndürme, yatay çevirme, parlaklık/kontrast değişimleri
+- **Sınıf dengesizliği:** (opsiyonel) `class_weight` veya dengeli örnekleme
 
-📌 Project Overview (English)
+> Not: Bu repo, “ham piksel + derin öğrenme” şartına uygun olarak tasarlanmıştır.
 
-This project presents a deep learning–based facial expression recognition system trained directly on raw pixel data using a Convolutional Neural Network (CNN).
+---
 
-The model is trained and evaluated on the FER2013 dataset and classifies facial expressions into 8 emotion classes:
+### 3) Model Mimarisi ve Yaklaşımın Gerekçesi
+Hafif ve güvenilir bir CNN mimarisi:
+- Girdi: `48×48×1`
+- Conv blokları: `Conv2D → BatchNorm → ReLU → MaxPool`
+- Dense + Dropout
+- Çıkış: Softmax (8 sınıf)
 
-Anger, Contempt, Disgust, Fear, Happiness, Neutral, Sadness, Surprise
+**Kayıp:** Categorical Cross-Entropy  
+**Optimizer:** Adam
 
-No handcrafted feature extraction (HOG, LBP, SIFT, etc.) or classical machine learning models are used.
-All feature representations are learned end-to-end by the CNN.
+Amaç: düşük boyutlu ham görüntülerde yeterli genelleme sağlayan “küçük CNN” yaklaşımı.
 
-🧠 Problem Tanımı / Problem Definition
+---
 
-Yüz ifadesi tanıma problemi, aşağıdaki zorluklar nedeniyle karmaşık bir bilgisayarlı görü problemidir:
+### 4) Kurulum (Bağımlılıklar)
+Python 3.10+ önerilir.
 
-Düşük çözünürlüklü (48×48) gri seviye görüntüler
-
-Duygular arası yüksek benzerlik (ör. Anger – Sadness)
-
-Ciddi sınıf dengesizliği (özellikle Contempt, Disgust, Fear)
-
-Bu çalışmanın amacı, hafif ama etkili, genelleme kabiliyeti yüksek bir CNN modeli tasarlamaktır.
-
-📂 Dataset
-
-Veri Seti / Dataset: FER2013
-
-Kaynak / Source: Kaggle
-
-Görüntü Boyutu / Image Size: 48×48 (grayscale)
-
-Bölünme / Split: Training / Validation / Test
-
-Test örnek sayısı: 7,099
-
-Ön İşleme ve Artırma / Preprocessing & Augmentation
-
-Piksel normalizasyonu 
-[
-0
-,
-1
-]
-[0,1]
-
-Veri artırma:
-
-Küçük döndürmeler (rotation)
-
-Yatay çevirme (horizontal flip)
-
-Parlaklık / kontrast değişimleri
-
-Sınıf dengesizliği için class_weight kullanımı
-
-🏗️ Model Mimarisi / Model Architecture
-
-Model, TensorFlow / Keras kullanılarak sıfırdan tasarlanmıştır:
-
-Girdi / Input: 48×48×1
-
-Conv Blok 1: Conv2D(32) → BatchNorm → ReLU → MaxPooling
-
-Conv Blok 2: Conv2D(64) → BatchNorm → ReLU → MaxPooling
-
-Conv Blok 3: Conv2D(128) → BatchNorm → ReLU → MaxPooling
-
-Tam Bağlantılı Katman:
-
-Dense(128, ReLU)
-
-Dropout(0.3)
-
-Çıkış Katmanı: Dense(8, Softmax)
-
-Kayıp Fonksiyonu: Categorical Cross-Entropy
-Optimizasyon: Adam (learning rate ≈ 1e-3)
-
-⚙️ Kurulum / Installation
+```bash
 pip install -r requirements.txt
 
-🚀 Çalıştırma Talimatları / How to Run
-🔹 Eğitim / Training
+
+5) Çalıştırma Talimatları (Komutlar)
+
 python src/train.py --config configs/config.yaml
 
-🔹 Değerlendirme (Test) / Evaluation
+Değerlendirme
+
 python src/eval.py --weights models/best_model.keras
 
-🔹 Tek Görüntü Üzerinde Tahmin / Inference
-python src/infer.py --image path/to/image.png --weights models/best_model.keras
+
+Tek bir görüntü üzerinde inference
 
 
-ℹ️ Projenin ana geliştirme süreci notebook ortamında yapılmış olsa bile,
-değerlendirme ve tekrar üretilebilirlik için eşdeğer Python scriptleri sağlanmıştır.
+python src/infer.py --image path/to/img.png --weights models/best_model.keras
 
-📊 Deneysel Sonuçlar / Experimental Results (8 Sınıf)
+Not (Önemli): Çalışma Notebook ile yapılmış olsa bile, bu repo öğretim üyesi değerlendirmesi için train/eval/infer script giriş noktaları sağlar. Script’ler aynı model/ön işleme kodunu çağıracak şekilde düzenlenmelidir.
 
-Test Accuracy: 71.81%
+6) Repo Yapısı
 
+fer2013-raw-pixel-cnn-8class/
+├─ src/
+│  ├─ train.py
+│  ├─ eval.py
+│  ├─ infer.py
+│  └─ utils.py                # (opsiyonel)
+├─ configs/
+│  └─ config.yaml
+├─ models/
+│  ├─ best_model.keras
+│  └─ final_model.keras
+├─ outputs/
+│  ├─ figures/
+│  │  ├─ accuracy_curve_8class.jpg
+│  │  ├─ loss_curve_8class.jpg
+│  │  ├─ confusion_matrix_counts_8class.jpg
+│  │  ├─ confusion_matrix_normalized_8class.jpg
+│  │  └─ sample_predictions_8class.jpg
+│  └─ metrics/
+│     └─ classification_report_8class.txt
+├─ presentation/
+│  └─ final_presentation.pdf
+├─ requirements.txt
+└─ README.md
+
+
+
+
+7) Sonuçlar (Test)
+Test Accuracy: 0.7181
 Test Loss: 0.9193
 
-Sınıf Bazlı F1-Skorları
-Sınıf	F1-score
-Anger	0.58
-Contempt	0.00
-Disgust	0.00
-Fear	0.00
-Happiness	0.82
-Neutral	0.77
-Sadness	0.43
-Surprise	0.75
-Gözlemler
+Sınıflandırma Raporu (Özet):
 
-Happiness, Neutral ve Surprise sınıflarında yüksek başarı
+Weighted F1: 0.6908
 
-Contempt, Disgust ve Fear sınıflarında düşük recall
+Macro F1: 0.4184
 
-Bunun temel nedeni: aşırı sınıf dengesizliği ve görsel benzerlik
+Özellikle Contempt / Disgust / Fear sınıflarında düşük performans gözlenmiştir (dengesizlik ve örnek sayısı azlığı etkili olabilir).
 
-📈 Görsel Çıktılar / Visual Outputs
+Eğitim Eğrileri ve Confusion Matrix:
 
-outputs/ klasörü içinde:
+Accuracy:
 
-Eğitim / doğrulama doğruluk eğrileri
+Loss:
 
-Eğitim / doğrulama kayıp eğrileri
+Confusion Matrix (Counts):
 
-Confusion Matrix (Count & Normalized)
+Confusion Matrix (Normalized):
 
-Test seti üzerinde örnek tahmin görselleri
+Örnek Tahminler (Test Inference):
 
-📽️ Proje Sunumu / Project Presentation
-
-Nihai sunum dosyası (PDF) aşağıdaki dizinde yer almaktadır:
+8) Sunum
+Nihai sunum dosyası:
 
 presentation/final_presentation.pdf
 
+Sunumda anlatılan deneyler repo içeriğiyle birebir örtüşmektedir (kod, metrikler, görseller).
 
-Sunumda yer alan tüm deneyler ve sonuçlar,
-bu GitHub deposundaki kod ve çıktılar ile birebir örtüşmektedir.
 
-🔁 Tekrar Üretilebilirlik / Reproducibility
 
-Sabit random seed kullanımı
+1) Problem Definition
+This project performs facial expression recognition on FER2013 using raw pixel data only (48×48 grayscale).
+No hand-crafted feature extraction (HOG/LBP/SIFT) or classical ML models are used. The model learns representations end-to-end via a lightweight CNN.
 
-Açık bağımlılık listesi (requirements.txt)
+Classes (8): Anger, Contempt, Disgust, Fear, Happiness, Neutral, Sadness, Surprise
 
-Ayrı eğitim / değerlendirme / inference scriptleri
+2) Dataset & Preprocessing
+Dataset: FER2013 (48×48 grayscale faces)
 
-📚 Kaynaklar / References
+Normalization: scale pixels to [0, 1]
 
-FER2013 Facial Expression Recognition Dataset (Kaggle)
+(Optional) Augmentation: small rotations, horizontal flips, brightness/contrast jitter
 
-Keras Sequential Model Guide
+Class imbalance: (optional) class_weight or balanced sampling
 
-CNN tabanlı yüz ifadesi tanıma literatürü
+3) Model Architecture & Rationale
+A compact CNN:
+
+Input: 48×48×1
+
+Conv blocks: Conv2D → BatchNorm → ReLU → MaxPool
+
+Dense + Dropout
+
+Output: Softmax (8 classes)
+
+Loss: Categorical Cross-Entropy
+Optimizer: Adam
+
+Goal: a lightweight yet reliable baseline CNN for raw low-resolution facial emotion classification.
+
+4) Installation
+Python 3.10+ recommended.
+
+bash
+Copy code
+pip install -r requirements.txt
+5) How to Run
+Training
+bash
+Copy code
+python src/train.py --config configs/config.yaml
+Evaluation
+bash
+Copy code
+python src/eval.py --weights models/best_model.keras
+Inference on a single image
+bash
+Copy code
+python src/infer.py --image path/to/img.png --weights models/best_model.keras
+Note: Even if the main development was done in a Notebook, this repository provides script entrypoints (train/eval/infer) to make grading and reproducibility straightforward.
+
+6) Repository Structure
+(see the structure above in the Turkish section)
+
+7) Test Results
+Test Accuracy: 0.7181
+Test Loss: 0.9193
+
+Report highlights:
+
+Weighted F1: 0.6908
+
+Macro F1: 0.4184
+
+Weak performance is observed for Contempt / Disgust / Fear (likely affected by class imbalance / low sample counts).
+
+Figures:
+
+Accuracy curve:
+
+Loss curve:
+
+Confusion matrices:
+
+
+Sample predictions:
+
+8) Presentation
+Final slides:
+
+presentation/final_presentation.pdf
+
+Acknowledgements
+FER2013 dataset (Kaggle mirror / public sources)
+
+TensorFlow / Keras
+
+
