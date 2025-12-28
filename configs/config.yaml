@@ -1,1 +1,8 @@
+data_dir: data/fer2013
+img_size: 48
+batch_size: 64
+epochs: 30
+lr: 0.001
+num_classes: 8
+seed: 42
 
