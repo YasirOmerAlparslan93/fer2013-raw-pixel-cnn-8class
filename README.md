@@ -220,21 +220,13 @@ fer2013-raw-pixel-cnn-8class/
 Lower performance is observed for *Contempt*, *Disgust*, and *Fear* due to class imbalance and limited samples.
 
 ### Training Curves
-![Accuracy](outputs/figures/epoch15/accuracy_curve_8class.jpg)  
-![Loss](outputs/figures/epoch15/loss_curve_8class.jpg)
-![Accuracy](outputs/figures/epoch 60/accuracy_curve_8class.jpg)  
-![Loss](outputs/figures/epoch 60/loss_curve_8class.jpg)
-![Accuracy](outputs/figures/epoch 360/accuracy_curve_8class.jpg)  
-![Loss](outputs/figures/epoch 360/loss_curve_8class.jpg)
+![Accuracy](outputs/figures/epoch 15/accuracy_curve_8class.jpg)  
+![Loss](outputs/figures/epoch 15/loss_curve_8class.jpg)
+
 ### Confusion Matrices
 ![Counts](outputs/figures/epoch 15/confusion_matrix_counts_8class.jpg)  
 ![Normalized](outputs/figures/epoch 15/confusion_matrix_normalized_8class.jpg)
 
-![Counts](outputs/figures/epoch 60/confusion_matrix_counts_8class.jpg)  
-![Normalized](outputs/figures/epoch 60/confusion_matrix_normalized_8class.jpg)
-
-![Counts](outputs/figures/epoch 360/confusion_matrix_counts_8class.jpg)  
-![Normalized](outputs/figures/epoch 360/confusion_matrix_normalized_8class.jpg)
 ### Sample Predictions
 ![Samples](outputs/figures/epoch 15/sample_predictions_8class.jpg)
 
