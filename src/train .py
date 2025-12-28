@@ -44,7 +44,9 @@ EMOTION_LABELS = ["Anger", "Contempt", "Disgust", "Fear",
 
 # Number of epochs (minimum 15-60 as requested)
 # Epoch sayısı (istenildiği gibi minimum 15-60)
-EPOCHS = 360
+EPOCHS = 15
+#EPOCHS = 60
+#EPOCHS = 360
 
 
 # ============================================================
