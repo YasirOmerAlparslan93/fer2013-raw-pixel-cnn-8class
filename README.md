@@ -220,8 +220,8 @@ fer2013-raw-pixel-cnn-8class/
 Lower performance is observed for *Contempt*, *Disgust*, and *Fear* due to class imbalance and limited samples.
 
 ### Training Curves
-![Accuracy](outputs/figures/epoch 15/accuracy_curve_8class.jpg)  
-![Loss](outputs/figures/epoch 15/loss_curve_8class.jpg)
+![Accuracy](outputs/figures/epoch15/accuracy_curve_8class.jpg)  
+![Loss](outputs/figures/epoch15/loss_curve_8class.jpg)
 ![Accuracy](outputs/figures/epoch 60/accuracy_curve_8class.jpg)  
 ![Loss](outputs/figures/epoch 60/loss_curve_8class.jpg)
 ![Accuracy](outputs/figures/epoch 360/accuracy_curve_8class.jpg)  
