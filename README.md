@@ -135,12 +135,10 @@ Yüz İfadesi Tanıma CNN DL-last.ipynb
 Önerilen klasör yapısı:
 
 ---
-
 proje_dizini/
 
 ```
 proje_dizini/
-│
 ├── fer2013/
 │   ├── train/
 │   ├── validation/
