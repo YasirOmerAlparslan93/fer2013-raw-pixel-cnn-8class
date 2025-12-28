@@ -122,23 +122,6 @@ bash
 Copy code
 python src/infer.py --image path/to/img.png --weights models/best_model.keras
 Note: Even if the main development was done in a Notebook, this repository provides script entrypoints (train/eval/infer) to make grading and reproducibility straightforward.
------------------------------------
-# Emotion CNN (Notebook -> Scripts)
-
-TR: Bu proje, notebook kodunu (eğitim + rapor + confusion matrix + Grad-CAM) script yapısına böler.
-EN: This project splits the notebook code (training + report + confusion matrix + Grad-CAM) into scripts.
-
-## 1) Training / Eğitim
-python src/train.py --config configs/config.yaml
-
-## 2) Evaluation / Değerlendirme
-python src/eval.py --weights models/best_emotion_model_8class.keras --data_dir ./fer2013 --results_dir ./outputs
-
-## 3) Inference on a Single Image / Tek Görüntü Üzerinde Çalıştırma
-python src/infer.py --image path/to/img.png --weights models/best_emotion_model_8class.keras --save_cam
----------------------------
-
-
 
 
 

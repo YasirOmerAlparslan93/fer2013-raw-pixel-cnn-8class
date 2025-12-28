@@ -1,3 +1,40 @@
+
+#götür dataseti dosyasını aynı notbook jupiterın dosyasınde sonra bu eğitim kodu çalıştır 
+
+%pip install tensorflow
+
+import tensorflow as tf
+print(tf.__version__)
+
+
+%pip install torch torchvision torchaudio
+
+import torch
+print(torch.__version__)
+print("CUDA available:", torch.cuda.is_available())
+
+
+import tensorflow as tf
+import torch
+
+print("TensorFlow version:", tf.__version__)
+print("PyTorch version:", torch.__version__)
+
+
+
+%pip install "protobuf<6,>=3.20"
+
+
+
+
+import tensorflow as tf
+import torch
+import google.protobuf
+
+print("TensorFlow:", tf.__version__)
+print("PyTorch:", torch.__version__)
+print("Protobuf:", google.protobuf.__version__)
+
 # ============================================================
 # Cell 1 – Imports and general configuration
 # Hücre 1 – Kütüphaneler ve genel ayarlar
@@ -47,7 +84,6 @@ EMOTION_LABELS = ["Anger", "Contempt", "Disgust", "Fear",
 EPOCHS = 15
 #EPOCHS = 60
 #EPOCHS = 360
-
 
 # ============================================================
 # Cell 2 – Load training, validation and test datasets
@@ -461,3 +497,207 @@ def predict_external_images(
     print("Image:", ext_fig_path)
 
 predict_external_images()
+
+
+# ============================================================
+# Cell 12 – Grad-CAM (TR/EN comments only)
+# ============================================================
+
+import tensorflow as tf
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+
+# ----------------------------
+# TR: Son Conv2D katmanını otomatik bul
+# EN: Auto-detect the last Conv2D layer
+# ----------------------------
+def get_last_conv_layer_name(model: tf.keras.Model) -> str:
+    for layer in reversed(model.layers):
+        if isinstance(layer, tf.keras.layers.Conv2D):
+            return layer.name
+    raise ValueError("No Conv2D layer found in the model.")
+
+# ----------------------------
+# TR: Grad-CAM ısı haritası üret
+# EN: Generate Grad-CAM heatmap
+# ----------------------------
+def make_gradcam_heatmap(
+    img_tensor: tf.Tensor,
+    model: tf.keras.Model,
+    last_conv_layer_name: str = None,
+    class_index: int = None
+):
+    # TR: Varsayılan olarak son conv katmanı
+    # EN: Use last conv layer by default
+    if last_conv_layer_name is None:
+        last_conv_layer_name = get_last_conv_layer_name(model)
+
+    # TR: Conv çıktısı + model çıktısı veren ara model
+    # EN: Build a model that maps input -> (last_conv_output, predictions)
+    last_conv_layer = model.get_layer(last_conv_layer_name)
+    grad_model = tf.keras.Model(
+        inputs=model.inputs,
+        outputs=[last_conv_layer.output, model.output]
+    )
+
+    with tf.GradientTape() as tape:
+        conv_outputs, preds = grad_model(img_tensor, training=False)
+
+        # TR: Hedef sınıf seçimi (yoksa modelin tahmini)
+        # EN: Target class selection (if None, use predicted class)
+        if class_index is None:
+            class_index = tf.argmax(preds[0])
+
+        # TR: Sınıf skoru (softmax çıkışı)
+        # EN: Class score (softmax output)
+        class_score = preds[:, class_index]
+
+    # TR: Gradients = d(score)/d(conv_outputs)
+    # EN: Gradients = d(score)/d(conv_outputs)
+    grads = tape.gradient(class_score, conv_outputs)
+
+    # TR: Kanal ağırlıkları (global average pooling)
+    # EN: Channel weights (global average pooling)
+    pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))  # shape: (C,)
+
+    # TR: Ağırlıklı toplam
+    # EN: Weighted sum
+    conv_outputs = conv_outputs[0]  # shape: (H, W, C)
+    heatmap = tf.reduce_sum(conv_outputs * pooled_grads, axis=-1)
+
+    # TR: ReLU ve normalize
+    # EN: ReLU and normalize
+    heatmap = tf.maximum(heatmap, 0)
+    denom = tf.reduce_max(heatmap) + 1e-8
+    heatmap = heatmap / denom
+
+    return heatmap.numpy(), int(class_index)
+
+# ----------------------------
+# TR: Heatmap'i görüntüye bindir (overlay)
+# EN: Overlay heatmap on the original image
+# ----------------------------
+def overlay_gradcam(
+    img_gray: np.ndarray,
+    heatmap: np.ndarray,
+    alpha: float = 0.35
+):
+    # TR: img_gray: (H,W) veya (H,W,1) [0,1]
+    # EN: img_gray: (H,W) or (H,W,1) in [0,1]
+    if img_gray.ndim == 3:
+        img_gray = img_gray.squeeze()
+
+    h, w = img_gray.shape
+    heatmap_resized = tf.image.resize(heatmap[..., np.newaxis], (h, w)).numpy().squeeze()
+
+    # TR: Renk haritası uygula
+    # EN: Apply colormap
+    cmap = plt.get_cmap("jet")
+    heatmap_rgb = cmap(heatmap_resized)[..., :3]  # drop alpha
+
+    # TR: Gri görüntüyü RGB'ye çevir
+    # EN: Convert gray image to RGB
+    img_rgb = np.stack([img_gray, img_gray, img_gray], axis=-1)
+
+    # TR: Karıştır (overlay)
+    # EN: Blend (overlay)
+    overlay = (1 - alpha) * img_rgb + alpha * heatmap_rgb
+    overlay = np.clip(overlay, 0, 1)
+    return overlay
+
+# ----------------------------
+# TR: Test setinden örneklerle Grad-CAM görselleştir ve kaydet
+# EN: Visualize & save Grad-CAM for sample test images
+# ----------------------------
+def save_gradcam_samples(
+    dataset,
+    model,
+    emotion_labels,
+    results_dir,
+    n=16,
+    filename="gradcam_samples_8class.jpg",
+    target_mode="pred"  # "pred" or "true"
+):
+    os.makedirs(results_dir, exist_ok=True)
+
+    images, labels_one_hot = next(iter(dataset))
+    images_np = images.numpy()                  # (B,48,48,1)
+    true_ids = np.argmax(labels_one_hot.numpy(), axis=1)
+
+    preds = model.predict(images, verbose=0)
+    pred_ids = np.argmax(preds, axis=1)
+
+    last_conv_name = get_last_conv_layer_name(model)
+
+    n = min(n, images_np.shape[0])
+    plt.figure(figsize=(12, 12))
+
+    for i in range(n):
+        img = images_np[i]                      # (48,48,1) in [0,1]
+        img_tensor = tf.convert_to_tensor(img[np.newaxis, ...], dtype=tf.float32)
+
+        # TR: Hangi sınıfa göre açıklayacağımızı seç
+        # EN: Choose which class to explain
+        if target_mode == "true":
+            class_id = int(true_ids[i])
+        else:
+            class_id = None  # explain predicted by default
+
+        heatmap, used_class = make_gradcam_heatmap(
+            img_tensor,
+            model,
+            last_conv_layer_name=last_conv_name,
+            class_index=class_id
+        )
+
+        overlay = overlay_gradcam(img.squeeze(), heatmap, alpha=0.35)
+
+        t = emotion_labels[int(true_ids[i])]
+        p = emotion_labels[int(pred_ids[i])]
+        used = emotion_labels[int(used_class)]
+        ok = (true_ids[i] == pred_ids[i])
+
+        plt.subplot(4, 4, i + 1)
+        plt.imshow(overlay)
+        plt.axis("off")
+        # TR/EN: Title shows True / Pred / Explained-class
+        plt.title(f"T:{t}\nP:{p}\nCAM:{used}", color=("green" if ok else "red"), fontsize=9)
+
+    plt.tight_layout()
+    out_path = os.path.join(results_dir, filename)
+    plt.savefig(out_path, dpi=200, bbox_inches="tight", format="jpg")
+    plt.show()
+    print("Saved Grad-CAM samples:", out_path)
+
+# Example usage:
+# TR: En iyi modeli yüklemek istersen (opsiyonel)
+# EN: If you want to load the best checkpoint (optional)
+# best_model = tf.keras.models.load_model(checkpoint_path)
+
+# TR: Mevcut 'model' ile çalış
+# EN: Use the current 'model'
+save_gradcam_samples(
+    dataset=test_ds,
+    model=model,
+    emotion_labels=EMOTION_LABELS,
+    results_dir=RESULTS_DIR,
+    n=16,
+    filename="gradcam_samples_8class.jpg",
+    target_mode="pred"  # explain predicted class
+)
+
+# TR: Gerçek etiket üzerinden açıklama yapmak istersen:
+# EN: If you want to explain based on the true class:
+save_gradcam_samples(
+    dataset=test_ds,
+    model=model,
+    emotion_labels=EMOTION_LABELS,
+    results_dir=RESULTS_DIR,
+    n=16,
+    filename="gradcam_samples_TRUEclass_8class.jpg",
+    target_mode="true"
+)
+
+
+
