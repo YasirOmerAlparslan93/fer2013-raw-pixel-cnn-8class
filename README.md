@@ -1,252 +1,251 @@
-# Ham Piksel Verisinden Yüz İfadesi Tanıma için Derin Öğrenme Tabanlı CNN Modeli (FER2013 – 8 Sınıf)  
-(A Deep Learning–Based CNN Model for Facial Expression Recognition from Raw Pixel Data)
+# Ham Piksel Verisinden Yüz İfadesi Tanıma için Derin Öğrenme Tabanlı CNN Modeli (FER2013 – 8 Sınıf)
+*(A Deep Learning–Based CNN Model for Facial Expression Recognition from Raw Pixel Data)*
 
-**GitHub Repo Name:** `fer2013-raw-pixel-cnn-8class`  
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)
+![Accuracy](https://img.shields.io/badge/Test%20Accuracy-71.8%25-success.svg)
+
+---
+
+**GitHub Repository Name:** `fer2013-raw-pixel-cnn-8class`  
 **Course:** Derin Öğrenme ve Uygulamaları  
-**Student:** <YASİR ÖMER ALPARSLAN ((KERKÜKLÜ - KARKOUKLI))> (<STUDENT ID 244225708 >)  
-**Instructor:** <Öğretim Üyesi Dr. SELİM YILMAZ>  
-**Date:** Dec 2025 – Jan 2026
-
----
-### 1) Problem Tanımı
-Bu proje, **FER2013** veri setindeki yüz görüntülerinden **ham piksel verisi** (48×48 gri seviye) kullanarak duygu sınıflandırması yapmayı hedefler.  
-Model, **elle öznitelik çıkarımı (HOG/LBP/SIFT)** veya klasik ML yöntemleri olmadan, **uçtan uca (end-to-end)** bir **CNN** ile öğrenir.
-
-**Sınıflar (8):** `Anger, Contempt, Disgust, Fear, Happiness, Neutral, Sadness, Surprise`
-
-
-1) Problem Definition
-This project performs facial expression recognition on FER2013 using raw pixel data only (48×48 grayscale).
-No hand-crafted feature extraction (HOG/LBP/SIFT) or classical ML models are used. The model learns representations end-to-end via a lightweight CNN.
-
-Classes (8): Anger, Contempt, Disgust, Fear, Happiness, Neutral, Sadness, Surprise
+**Student:** <YASİR ÖMER ALPARSLAN ((KERKÜKLÜ - KARKOUKLI))> (<STUDENT ID 244225708 >)   
+**Instructor:** Öğr. Üyesi Dr. Selim Yılmaz  
+**Date:** December 2025 – January 2026  
 
 ---
 
-### 2) Veri Seti ve Ön İşleme
-- **Dataset:** FER2013 (48×48 grayscale facial images)
-- **Normalization:** piksel değerleri `[0, 1]` aralığına ölçeklenir
-- (Opsiyonel) **Augmentation:** küçük döndürme, yatay çevirme, parlaklık/kontrast değişimleri
-- **Sınıf dengesizliği:** (opsiyonel) `class_weight` veya dengeli örnekleme
+## Abstract / Özet
 
-> Not: Bu repo, “ham piksel + derin öğrenme” şartına uygun olarak tasarlanmıştır.
+**EN:**  
+This study presents a lightweight convolutional neural network (CNN) for facial expression recognition (FER) using the FER2013 dataset, relying solely on raw pixel data (48×48 grayscale).  
+Unlike classical approaches based on hand-crafted features (HOG, LBP, SIFT), the proposed model learns discriminative representations end-to-end directly from pixels.  
+Experimental results show that a compact CNN can achieve competitive performance on low-resolution facial emotion classification.
 
-
-
-2) Dataset & Preprocessing
-Dataset: FER2013 (48×48 grayscale faces)
-
-Normalization: scale pixels to [0, 1]
-
-(Optional) Augmentation: small rotations, horizontal flips, brightness/contrast jitter
-
-Class imbalance: (optional) class_weight or balanced sampling
+**TR:**  
+Bu çalışmada, FER2013 veri seti kullanılarak yalnızca ham piksel verisine (48×48 gri seviye) dayanan hafif bir evrişimsel sinir ağı (CNN) sunulmaktadır.  
+Elle çıkarılmış özniteliklere (HOG, LBP, SIFT) dayanan klasik yaklaşımların aksine, önerilen model uçtan uca (end-to-end) biçimde doğrudan piksellerden öğrenir.  
+Deneysel sonuçlar, küçük ve hafif bir CNN mimarisinin düşük çözünürlüklü yüz ifadeleri için rekabetçi performans sağlayabildiğini göstermektedir.
 
 ---
 
-### 3) Model Mimarisi ve Yaklaşımın Gerekçesi
-Hafif ve güvenilir bir CNN mimarisi:
-- Girdi: `48×48×1`
-- Conv blokları: `Conv2D → BatchNorm → ReLU → MaxPool`
-- Dense + Dropout
-- Çıkış: Softmax (8 sınıf)
+## 1. Problem Definition / Problem Tanımı
 
-**Kayıp:** Categorical Cross-Entropy  
-**Optimizer:** Adam
+**TR:**  
+Bu proje, FER2013 veri setindeki yüz görüntülerinden ham piksel verisi (48×48 gri seviye) kullanarak duygu sınıflandırması yapmayı hedefler.  
+Model, elle öznitelik çıkarımı (HOG / LBP / SIFT) veya klasik makine öğrenmesi yöntemleri olmadan, uçtan uca bir CNN mimarisi ile eğitilmiştir.
 
-Amaç: düşük boyutlu ham görüntülerde yeterli genelleme sağlayan “küçük CNN” yaklaşımı.
+**EN:**  
+This project performs facial expression recognition on the FER2013 dataset using raw pixel data only (48×48 grayscale).  
+No hand-crafted feature extraction or classical machine learning methods are employed; the CNN learns representations end-to-end.
 
-
-
-
-3) Model Architecture & Rationale
-A compact CNN:
-
-Input: 48×48×1
-
-Conv blocks: Conv2D → BatchNorm → ReLU → MaxPool
-
-Dense + Dropout
-
-Output: Softmax (8 classes)
-
-Loss: Categorical Cross-Entropy
-Optimizer: Adam
-
-Goal: a lightweight yet reliable baseline CNN for raw low-resolution facial emotion classification.
+**Classes (8):**  
+Anger, Contempt, Disgust, Fear, Happiness, Neutral, Sadness, Surprise
 
 ---
 
-### 4) Kurulum (Bağımlılıklar)
-Python 3.10+ önerilir.
+## 2. Dataset & Preprocessing / Veri Seti ve Ön İşleme
+
+**EN:**  
+- Dataset: FER2013 (48×48 grayscale facial images)  
+- Normalization: pixel values scaled to [0, 1]  
+- Data Augmentation (optional): small rotations, horizontal flipping, brightness/contrast jitter  
+- Class imbalance handling (optional): class_weight, balanced sampling  
+
+**TR:**  
+- **Veri Seti:** FER2013 (48×48 gri seviye yüz görüntüleri)  
+- **Normalizasyon:** piksel değerleri [0, 1] aralığına ölçeklenir  
+- **Veri Artırma (opsiyonel):** küçük döndürme, yatay çevirme, parlaklık/kontrast değişimleri  
+- **Sınıf dengesizliği:** class_weight veya dengeli örnekleme  
+
+⚠️ *Not:* Bu repo, “ham piksel + derin öğrenme” şartına uygun olarak tasarlanmıştır.
+
+---
+
+## 3. Model Architecture & Rationale / Model Mimarisi ve Gerekçesi
+
+**Architecture:**  
+- Input: 48 × 48 × 1  
+- Conv Blocks: Conv2D → BatchNorm → ReLU → MaxPooling  
+- Regularization: Dropout  
+- Classifier: Fully Connected + Softmax  
+- Loss: Categorical Cross-Entropy  
+- Optimizer: Adam  
+
+**Motivation / Gerekçe:**  
+Low-resolution facial images require lightweight yet expressive architectures to avoid overfitting while maintaining generalization ability.  
+Düşük çözünürlüklü yüz görüntüleri için aşırı öğrenmeyi önleyen, ancak genelleme yeteneğini koruyan hafif CNN mimarileri tercih edilmiştir.
+
+---
+
+## 4. Installation / Kurulum
 
 ```bash
 pip install -r requirements.txt
+```
 
-4) Installation
-Python 3.10+ recommended.
+- Python 3.10+ recommended  
+- TensorFlow / Keras backend  
 
-bash
+---
+
+## 5. How to Run / Çalıştırma
+
+Option 1 – Same Directory Structure (Simple Setup)
+
+English
+
+You can place the entire FER2013 dataset inside a folder named fer2013, located in the same directory as the training code file.
+
+The training code is contained in the Jupyter Notebook (or Python script) named:
+
+Tam kodu eğitim.py 
+Yüz İfadesi Tanıma CNN DL-last.ipynb
+Recommended directory structure:
+
+
 Copy code
-pip install -r requirements.txt 
+project_root/
+│
+├── fer2013/
+│   ├── train/
+│   ├── validation/
+│   └── test/
+│
+├── Yüz İfadesi Tanıma CNN DL-last.ipynb
+└── Tam kodu eğitim.py
+After verifying that the dataset folders are correctly placed, simply open the notebook and run all cells sequentially, or execute the Python script to start training.
 
-5) Çalıştırma Talimatları (Komutlar)
+Türkçe
+Seçenek 1 – Aynı Dizin Yapısı (Basit Kurulum)
 
+FER2013 veri setinin tamamını fer2013 adlı bir klasör altına yerleştirerek, eğitim kodu ile aynı dizinde bulundurabilirsiniz.
+
+Eğitim kodu şu dosyalardan birinde yer almaktadır:
+
+nginx
+Copy code
+Tam kodu eğitim.py
+veya
+
+Copy code
+Yüz İfadesi Tanıma CNN DL-last.ipynb
+Önerilen klasör yapısı:
+
+
+proje_dizini/
+│
+├── fer2013/
+│   ├── train/
+│   ├── validation/
+│   └── test/
+│
+├── Yüz İfadesi Tanıma CNN DL-last.ipynb
+└── Tam kodu eğitim.py
+Klasör yapısının doğru olduğundan emin olduktan sonra, notebook içindeki tüm hücreleri sırasıyla çalıştırmanız veya Python dosyasını çalıştırmanız yeterlidir.
+
+Option 2 – Custom Dataset Path
+
+
+### Training / Eğitim
+```bash
 python src/train.py --config configs/config.yaml
+```
 
-
-
-
-Değerlendirme
-
+### Evaluation / Değerlendirme
+```bash
 python src/eval.py --weights models/best_emotion_cnn_8class.keras
+```
 
+### Inference (Single Image) / Tek Görüntü
+```bash
+python src/infer.py --image path/to/image.png --weights models/best_emotion_cnn_8class.keras
+```
 
-Tek bir görüntü üzerinde inference
+*Note:* Even if development was done in notebooks, script-based entry points are provided for reproducibility and grading.
 
-python src/infer.py --image path/to/img.png --weights models/best_model.keras
+---
 
-Not (Önemli): Çalışma Notebook ile yapılmış olsa bile, bu repo öğretim üyesi değerlendirmesi için train/eval/infer script giriş noktaları sağlar. Script’ler aynı model/ön işleme kodunu çağıracak şekilde düzenlenmelidir.
+## 6. Repository Structure
 
-5) How to Run
-Training
-bash
-Copy code
-python src/train.py --config configs/config.yaml
-Evaluation
-bash
-Copy code
-python src/eval.py --weights models/best_emotion_cnn_8class.keras
-Inference on a single image
-bash
-Copy code
-python src/infer.py --image path/to/img.png --weights models/best_model.keras
-Note: Even if the main development was done in a Notebook, this repository provides script entrypoints (train/eval/infer) to make grading and reproducibility straightforward.
------------------------------------
-# Emotion CNN (Notebook -> Scripts)
-
-TR: Bu proje, notebook kodunu (eğitim + rapor + confusion matrix + Grad-CAM) script yapısına böler.
-EN: This project splits the notebook code (training + report + confusion matrix + Grad-CAM) into scripts.
-
-## 1) Training / Eğitim
-python src/train.py --config configs/config.yaml
-
-## 2) Evaluation / Değerlendirme
-python src/eval.py --weights models/best_emotion_model_8class.keras --data_dir ./fer2013 --results_dir ./outputs
-
-## 3) Inference on a Single Image / Tek Görüntü Üzerinde Çalıştırma
-python src/infer.py --image path/to/img.png --weights models/best_emotion_model_8class.keras --save_cam
----------------------------
-
-
-
-
-
-6) Repo Yapısı // Repository Structure
-
+```
 fer2013-raw-pixel-cnn-8class/
 ├─ src/
 │  ├─ train.py
 │  ├─ eval.py
 │  ├─ infer.py
-│  └─ utils.py                # (opsiyonel)
+│  └─ utils.py
+   ├─Tam kodu eğitim.py
+   └─Yüz İfadesi Tanıma CNN DL-last.ipynb
 ├─ configs/
 │  └─ config.yaml
 ├─ models/
-│   └─ epoch 15/  
-│   │  ├─ best_emotion_cnn_8class
-│   │  └─ final_emotion_cnn_8class.keras
-│   ├─ epoch 60/ 
-│   │  ├─ best_emotion_cnn_8class
-│   │  └─ final_emotion_cnn_8class.keras
-│   │ 
-│   └─ epoch 360/
-│      ├─ best_emotion_cnn_8class
-│	   └─ final_emotion_cnn_8class.keras
+│  └─ epoch_x/
+│     ├─ best_emotion_cnn_8class.keras
+│     └─ final_emotion_cnn_8class.keras
 ├─ outputs/
 │  ├─ figures/
-│  │  ├─ accuracy_curve_8class.jpg
-│  │  ├─ loss_curve_8class.jpg
-│  │  ├─ confusion_matrix_counts_8class.jpg
-│  │  ├─ confusion_matrix_normalized_8class.jpg
-│  │  └─ sample_predictions_8class.jpg
+│  │  └─ epoch_x/
+│  │    ├─accuracy_curve_8class.jpg
+│  │    ├─ loss_curve_8class.jpg
+│  │    ├─ confusion_matrix_counts_8class.jpg
+│  │    ├─ confusion_matrix_normalized_8class.jpg
+│  │    ├─ sample_predictions_8class.jpg
+│  │    └─ gradcam_samples_8class.jpg
 │  └─ metrics/
-│     └─ classification_report_8class.txt
+│     └─ epoch_x/
+│        └─ classification_report_8class.txt
 ├─ presentation/
 │  └─ final_presentation.pdf
 ├─ requirements.txt
 └─ README.md
+```
 
+---
 
+## 7. Experimental Results / Deneysel Sonuçlar
 
+**Quantitative Metrics:**  
+- Test Accuracy: **0.7181**  
+- Test Loss: **0.9193**  
+- Weighted F1-Score: **0.6908**  
+- Macro F1-Score: **0.4184**
 
-7) Sonuçlar (Test)
-Test Accuracy: 0.7181
-Test Loss: 0.9193
+Lower performance is observed for *Contempt*, *Disgust*, and *Fear* due to class imbalance and limited samples.
 
-Sınıflandırma Raporu (Özet):
+### Training Curves
+![Accuracy](outputs/figures/epoch_x/accuracy_curve_8class.jpg)  
+![Loss](outputs/figures/loss_curve_8class.jpg)
 
-Weighted F1: 0.6908
+### Confusion Matrices
+![Counts](outputs/figures/epoch_x/confusion_matrix_counts_8class.jpg)  
+![Normalized](outputs/figures/confusion_matrix_normalized_8class.jpg)
 
-Macro F1: 0.4184
+### Sample Predictions
+![Samples](outputs/figures/epoch_x/sample_predictions_8class.jpg)
 
-Özellikle Contempt / Disgust / Fear sınıflarında düşük performans gözlenmiştir (dengesizlik ve örnek sayısı azlığı etkili olabilir).
+### Grad-CAM Visualizations
+![GradCAM](outputs/figures/epoch_x/gradcam_samples_8class.jpg)
 
-Eğitim Eğrileri ve Confusion Matrix:
+Model attention focuses mainly on eyes, mouth, and facial muscles, confirming meaningful spatial reasoning.
 
-Accuracy:
+---
 
-Loss:
+## 8. Presentation / Sunum
 
-Confusion Matrix (Counts):
+📄 `presentation/Emotion_CNN_8Class_Presentation.pdf`  
 
-Confusion Matrix (Normalized):
+All experiments and figures in the presentation exactly match the repository content.
 
-Örnek Tahminler (Test Inference):
+---
 
+## Acknowledgements / Teşekkür
 
-7) Test Results
-Test Accuracy: 0.7181
-Test Loss: 0.9193
+- FER2013 Dataset (public / Kaggle mirror):  
+  https://www.kaggle.com/code/pedroadorighello/gradcam-fer2013-test/input?select=fer2013plus  
+- TensorFlow / Keras  
 
-Report highlights:
+---
 
-Weighted F1: 0.6908
-
-Macro F1: 0.4184
-
-Weak performance is observed for Contempt / Disgust / Fear (likely affected by class imbalance / low sample counts).
-
-Figures:
-
-Accuracy curve:
-
-Loss curve:
-
-Confusion matrices:
-
-
-Sample predictions:
-
-
-8) Sunum
-Nihai sunum dosyası:
-
-Emotion_CNN_8 Class_Presentation.pdf
-
-Sunumda anlatılan deneyler repo içeriğiyle birebir örtüşmektedir (kod, metrikler, görseller).
-
-
-
-8) Presentation
-Final slides:
-
-presentation/final_presentation.pdf
-
-Acknowledgements
-FER2013 dataset (Kaggle mirror / public sources) link : https://www.kaggle.com/code/pedroadorighello/gradcam-fer2013-test/input?select=fer2013plus 
-
-libraries
-TensorFlow / Keras
-
-
+## Keywords
+Facial Expression Recognition · CNN · Deep Learning · FER2013 · Raw Pixels · Grad-CAM
