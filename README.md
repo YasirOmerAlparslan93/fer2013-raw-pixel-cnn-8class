@@ -104,7 +104,11 @@ Yüz İfadesi Tanıma CNN DL-last.ipynb
 Recommended directory structure:
 
 
-Copy code
+---
+
+project_root/
+
+```
 project_root/
 │
 ├── fer2013/
@@ -124,15 +128,17 @@ FER2013 veri setinin tamamını fer2013 adlı bir klasör altına yerleştirerek
 Eğitim kodu şu dosyalardan birinde yer almaktadır:
 
 nginx
-Copy code
 Tam kodu eğitim.py
 veya
 
-Copy code
 Yüz İfadesi Tanıma CNN DL-last.ipynb
 Önerilen klasör yapısı:
 
+---
 
+proje_dizini/
+
+```
 proje_dizini/
 │
 ├── fer2013/
@@ -214,18 +220,26 @@ fer2013-raw-pixel-cnn-8class/
 Lower performance is observed for *Contempt*, *Disgust*, and *Fear* due to class imbalance and limited samples.
 
 ### Training Curves
-![Accuracy](outputs/figures/epoch_x/accuracy_curve_8class.jpg)  
-![Loss](outputs/figures/loss_curve_8class.jpg)
-
+![Accuracy](outputs/figures/epoch 15/accuracy_curve_8class.jpg)  
+![Loss](outputs/figures/epoch 15/loss_curve_8class.jpg)
+![Accuracy](outputs/figures/epoch 60/accuracy_curve_8class.jpg)  
+![Loss](outputs/figures/epoch 60/loss_curve_8class.jpg)
+![Accuracy](outputs/figures/epoch 360/accuracy_curve_8class.jpg)  
+![Loss](outputs/figures/epoch 360/loss_curve_8class.jpg)
 ### Confusion Matrices
-![Counts](outputs/figures/epoch_x/confusion_matrix_counts_8class.jpg)  
-![Normalized](outputs/figures/confusion_matrix_normalized_8class.jpg)
+![Counts](outputs/figures/epoch 15/confusion_matrix_counts_8class.jpg)  
+![Normalized](outputs/figures/epoch 15/confusion_matrix_normalized_8class.jpg)
 
+![Counts](outputs/figures/epoch 60/confusion_matrix_counts_8class.jpg)  
+![Normalized](outputs/figures/epoch 60/confusion_matrix_normalized_8class.jpg)
+
+![Counts](outputs/figures/epoch 360/confusion_matrix_counts_8class.jpg)  
+![Normalized](outputs/figures/epoch 360/confusion_matrix_normalized_8class.jpg)
 ### Sample Predictions
-![Samples](outputs/figures/epoch_x/sample_predictions_8class.jpg)
+![Samples](outputs/figures/epoch 15/sample_predictions_8class.jpg)
 
 ### Grad-CAM Visualizations
-![GradCAM](outputs/figures/epoch_x/gradcam_samples_8class.jpg)
+![GradCAM](outputs/figures/gradcam/gradcam_samples_8class.jpg)
 
 Model attention focuses mainly on eyes, mouth, and facial muscles, confirming meaningful spatial reasoning.
 
