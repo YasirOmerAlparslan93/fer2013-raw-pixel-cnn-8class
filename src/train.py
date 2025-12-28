@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Training / Eğitim
 python src/train.py --config configs/config.yaml

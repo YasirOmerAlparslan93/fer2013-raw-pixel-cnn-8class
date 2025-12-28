@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Inference on a Single Image / Tek Görüntü Üzerinde Çalıştırma
 python src/infer.py --image path/to/img.png --weights models/best_emotion_model_8class.keras --save_cam

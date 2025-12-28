@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 TR: FER2013/FER2013Plus 8-sınıf duygu sınıflandırma yardımcıları
 EN: Utilities for FER2013/FER2013Plus 8-class emotion classification

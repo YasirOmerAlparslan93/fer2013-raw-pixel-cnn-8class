@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 """
 Evaluation / Değerlendirme
 python src/eval.py --weights models/best_emotion_model_8class.keras --data_dir ./fer2013 --results_dir ./outputs
