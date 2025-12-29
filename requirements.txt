@@ -7,3 +7,5 @@ matplotlib
 opencv-python
 pyyaml
 tqdm
+
+py3.1
